@@ -1,0 +1,73 @@
+---
+title: 'Dear Mona Followup: Where Do People Drink The Most Beer, Wine And Spirits?'
+author: "ZIXIAN LIANG"
+date: "2024-01-29"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+Introduction
+
+Alcoholic beverages, usually being a matter of personal preference, are also subject to regional influences. I choose to explore the top 10 countries in terms of total liters of pure alcohol consumed and uncover which beverage reigns as the most popular.
+
+
+Dataset from: https://github.com/fivethirtyeight/data/tree/master/alcohol-consumption
+
+
+```{r}
+library(tidyverse)
+```
+
+Data Acquisition
+
+```{r}
+url <- 'https://raw.githubusercontent.com/fivethirtyeight/data/master/alcohol-consumption/drinks.csv'
+database <- read_csv(url)
+database
+```
+
+Here to sum up the total quantities of each type of alcoholic beverage to reflect which one is the most popular
+
+
+```{r}
+column_sums <- colSums(database[, -1])
+column_sums
+```
+
+```{r}
+alcohol_totals <- colSums(database[, 2:4])
+alcohol_totals
+```
+```{r}
+most_popular <- data.frame(alcohol = names(alcohol_totals), total = alcohol_totals)
+most_popular 
+```
+
+```{r}
+ggplot(most_popular, aes(x = alcohol, y = total)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  labs(title = "Total Alcohol Consumption by Type", x = "Type", y = "Total") +
+  theme_minimal()
+```
+Next, move to  see the top 10 countries with the highest Pure Alcohol Consumption.
+
+```{r}
+top_10_overall <- head(database[order(-database$total_litres_of_pure_alcohol), ], 10)
+top_10_overall
+```
+```{r}
+ggplot(top_10_overall, aes(x = reorder(country, -total_litres_of_pure_alcohol), y = total_litres_of_pure_alcohol)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  labs(title = "Top 10 Countries by Pure Alcohol Consumption",
+       x = "country",
+       y = "total_litres_of_pure_alcohol") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+Conclusion
+
+Overall, this study demonstrates that Belarus stands out as the world's most alcohol-consuming country with 14.4 total liters of pure alcohol. On the other hand, given the correlation between higher consumption and popularity, beer dominates as the undisputed favorite alcoholic beverage on earth.
+
